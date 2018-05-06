@@ -1,3 +1,14 @@
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
+
+movies:
+    resource: AppBundle\Controller\MovieController
+    type: rest
+
+movies_post:
+    path: /movies
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Movie:postMovies
+        _format: json
