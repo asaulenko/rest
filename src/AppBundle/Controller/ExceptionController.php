@@ -7,6 +7,7 @@ use FOS\RestBundle\Controller\ControllerTrait;
 use FOS\RestBundle\View\View;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 
 class ExceptionController extends AbstractController
@@ -26,7 +27,7 @@ class ExceptionController extends AbstractController
             return $this->getView(json_decode($exception->getMessage(), true), $exception->getStatusCode());
         }
 
-        if ($exception instanceof ValidationException) {
+        if ($exception instanceof HttpException) {
             return $this->getView($exception->getMessage(), $exception->getStatusCode());
         }
 
@@ -39,7 +40,7 @@ class ExceptionController extends AbstractController
      *
      * @return View
      */
-    private function getView($msg, ?string $statusCode): View
+    private function getView($msg, string $statusCode = null): View
     {
         $statusCode = $statusCode ?? 500;
 
