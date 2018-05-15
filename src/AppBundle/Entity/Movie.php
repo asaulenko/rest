@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -43,6 +45,18 @@ class Movie
      * @ORM\Column(type="text")
      */
     private $description;
+
+    /**
+     * @var Collection|Role[]
+     *
+     * @ORM\OneToMany(targetEntity="Role", mappedBy="movie")
+     */
+    private $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -114,5 +128,22 @@ class Movie
     public function setDescription($description)
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param Role $role
+     */
+    public function addRole(Role $role)
+    {
+        $role->setMovie($this);
+        $this->roles->add($role);
     }
 }

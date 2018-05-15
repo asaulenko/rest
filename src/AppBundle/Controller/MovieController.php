@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Movie;
+use AppBundle\Entity\Role;
 use AppBundle\Exception\ValidationException;
 use FOS\RestBundle\Controller\ControllerTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -81,5 +82,44 @@ class MovieController extends AbstractController
         }
 
         return $movie;
+    }
+
+    /**
+     * @Rest\View()
+     *
+     * @param Movie $movie
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMovieRolesAction(Movie $movie)
+    {
+        return $movie->getRoles();
+    }
+
+    /**
+     * @Rest\View(statusCode=201)
+     * @ParamConverter("role", converter="fos_rest.request_body")
+     * @Rest\NoRoute()
+     *
+     * @param Movie $movie
+     * @param Role $role
+     * @param ConstraintViolationListInterface $validationErrors
+     *
+     * @return Role
+     */
+    public function postMovieRoleAction(Movie $movie, Role $role, ConstraintViolationListInterface $validationErrors)
+    {
+        if (count($validationErrors) > 0) {
+            throw new ValidationException($validationErrors);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        $movie->addRole($role);
+
+        $em->persist($role);
+        $em->flush();
+
+        return $role;
     }
 }
